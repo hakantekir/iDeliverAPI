@@ -60,4 +60,21 @@ router.post('/login', async (req, res) => {
     }
 });
 
+router.post('/verify', async (req, res) => {
+    const { token } = req.body;
+    if (!token) {
+        return res.status(400).json(missingCredentialsError);
+    }
+    try {
+        const payload = jwt.verifyToken(token);
+        const user = await User.findOne({ id: payload.id, email: payload.email });
+        if (!user) {
+            return res.status(401).json(invalidCredentialsError);
+        }
+        res.status(200).json({ name: user.name, email: user.email });
+    } catch (err) {
+        res.status(401).json(invalidCredentialsError);
+    }
+});
+
 module.exports = router;
