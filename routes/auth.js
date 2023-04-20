@@ -5,6 +5,7 @@ const bcrypt = require("bcrypt");
 const User = require("../models/user");
 const jwt = require("../utils/jwt");
 const error = require("../utils/error");
+
 router.post("/register", async (req, res) => {
   const { name, email, password } = req.body;
   if (!name || !email || !password) {
