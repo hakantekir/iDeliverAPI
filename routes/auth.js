@@ -4,21 +4,11 @@ require('dotenv');
 const bcrypt = require('bcrypt');
 const User = require('../models/user');
 const jwt = require('../utils/jwt');
-
-const createError = (statusCode, reason, message) => {
-    return { statusCode, reason, message };
-};
-
-const missingCredentialsError = createError(101, 'Missing credentials', 'Please provide a name, email, and password');
-const invalidCredentialsError = createError(102, 'Invalid credentials', 'The email or password you entered is incorrect');
-const emailExistsError = createError(103, 'Email already exists', 'This email address is already in use');
-const passwordTooShortError = createError(104, 'Password too short', 'Password must be at least 8 characters');
-const serverError = createError(500, 'Server error', 'Something went wrong');
-
+const error = require('../utils/error');
 router.post('/register', async (req, res) => {
     const { name, email, password } = req.body;
     if (!name || !email || !password) {
-        return res.status(400).json(missingCredentialsError);
+        return res.status(400).json(error.missingCredentialsError);
     }
     const user = new User({
         name,
@@ -31,49 +21,49 @@ router.post('/register', async (req, res) => {
         res.status(201).json({ token: token });
     } catch (err) {
         if ( err.errors && err.errors.password && err.errors.password.kind === 'minlength') {
-            return res.status(400).json(passwordTooShortError);
+            return res.status(400).json(error.passwordTooShortError);
         } else if (err.code === 11000) {
-            return res.status(400).json(emailExistsError);
+            return res.status(400).json(error.emailExistsError);
         }
-        res.status(500).json(serverError);
+        res.status(500).json(error.serverError);
     }
 });
 
 router.post('/login', async (req, res) => {
     const { email, password } = req.body;
     if (!email || !password) {
-        return res.status(400).json(missingCredentialsError);
+        return res.status(400).json(error.missingCredentialsError);
     }
     try {
         const user = await User.findOne({ email });
         if(!user) {
-            return res.status(401).json(invalidCredentialsError);
+            return res.status(401).json(error.invalidCredentialsError);
         }
         const validPassword = await bcrypt.compare(password, user.password);
         if(!validPassword) {
-            return res.status(401).json(invalidCredentialsError);
+            return res.status(401).json(error.invalidCredentialsError);
         }
         const token = jwt.generateToken({ id: user._id, email: user.email });
         res.status(200).json({ token: token });
     } catch (err) {
-        res.status(500).json(serverError);
+        res.status(500).json(error.serverError);
     }
 });
 
 router.post('/verify', async (req, res) => {
     const { token } = req.body;
     if (!token) {
-        return res.status(400).json(missingCredentialsError);
+        return res.status(400).json(error.missingCredentialsError);
     }
     try {
         const payload = jwt.verifyToken(token);
         const user = await User.findOne({ id: payload.id, email: payload.email });
         if (!user) {
-            return res.status(401).json(invalidCredentialsError);
+            return res.status(401).json(error.invalidCredentialsError);
         }
         res.status(200).json({ name: user.name, email: user.email });
     } catch (err) {
-        res.status(401).json(invalidCredentialsError);
+        res.status(401).json(error.invalidCredentialsError);
     }
 });
 
