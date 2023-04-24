@@ -7,6 +7,8 @@ const YAML = require('yamljs');
 const swaggerDocument = YAML.load('./utils/openapi.yaml');
 
 dotenv.config();
+
+const port = process.env.PORT || 8000;
 app.use(express.json());
 
 const authRouter = require("./routes/auth");
@@ -23,6 +25,6 @@ mongoose.connect(process.env.ATLAS_URI, { useNewUrlParser: true }, (err) => {
   }
 });
 
-app.listen(process.env.PORT, () => {
-  console.log(`Server is running on port ${process.env.PORT}`);
+app.listen(port, () => {
+  console.log(`Server is running on port ${port}`);
 });

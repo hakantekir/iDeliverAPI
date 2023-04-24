@@ -1,12 +1,13 @@
 const jwt = require("jsonwebtoken");
 const error = require("../utils/error");
+const secret = process.env.JWT_SECRET || "secret";
 
 function generateToken(payload) {
-  return jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: "2w" });
+  return jwt.sign(payload, secret, { expiresIn: "2w" });
 }
 
 function verifyToken(token) {
-  return jwt.verify(token, process.env.JWT_SECRET);
+  return jwt.verify(token, secret);
 }
 
 function verifyTokenMiddleware(req, res, next) {
