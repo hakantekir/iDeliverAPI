@@ -1,5 +1,8 @@
 const createError = (statusCode, reason, message) => {
-    return { statusCode, reason, message };
+    const error = new Error(message);
+    error.statusCode = statusCode;
+    error.reason = reason;
+    return error;
 };
 
 const missingCredentialsError = createError(400, "Missing credentials", "Please provide a name, email, and password");
