@@ -1,21 +1,18 @@
 const express = require("express");
-const app = express();
-
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 const swaggerUi = require('swagger-ui-express');
 const YAML = require('yamljs');
 const swaggerDocument = YAML.load('./utils/openapi.yaml');
 
-dotenv.config();
-
 const port = process.env.PORT || 8000;
+const app = express();
+app.use(express.json());
+dotenv.config();
 
 const authRouter = require("./routes/auth");
 
 app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
-
-app.use(express.json());
 app.use('/api/v1/auth', authRouter)
 
 app.use((err, req, res, next) => {

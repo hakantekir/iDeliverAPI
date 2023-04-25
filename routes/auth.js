@@ -32,8 +32,7 @@ router.post('/register', async (req, res, next) => {
         }
     }
     res.status(500).json(error.serverError);
-  }
-});
+  });
 
 
 router.post('/login', async (req, res, next) => {
@@ -56,11 +55,6 @@ router.post('/login', async (req, res, next) => {
             next(error.serverError)
         }
     }
-    const token = jwt.generateToken({ id: user._id, email: user.email });
-    res.status(200).json({ token: token });
-  } catch (err) {
-    res.status(500).json(error.serverError);
-  }
 });
 
 
@@ -79,10 +73,6 @@ router.post('/verify', async (req, res, next) => {
     } catch (err) {
         next(error.expiredTokenError);
     }
-    res.status(200).json({ name: user.name, email: user.email });
-  } catch (err) {
-    res.status(401).json(error.invalidCredentialsError);
-  }
 });
 
 module.exports = router;
