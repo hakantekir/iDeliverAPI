@@ -1,10 +1,19 @@
-const express = require('express');
+const express = require("express");
 const app = express();
-const mongoose = require('mongoose');
-const dotenv = require('dotenv');
+
+const mongoose = require("mongoose");
+const dotenv = require("dotenv");
+const swaggerUi = require('swagger-ui-express');
+const YAML = require('yamljs');
+const swaggerDocument = YAML.load('./utils/openapi.yaml');
+
 dotenv.config();
 
-const authRouter = require('./routes/auth');
+const port = process.env.PORT || 8000;
+
+const authRouter = require("./routes/auth");
+
+app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 app.use(express.json());
 app.use('/api/v1/auth', authRouter)
@@ -20,13 +29,13 @@ app.use((err, req, res, next) => {
 });
 
 mongoose.connect(process.env.ATLAS_URI, { useNewUrlParser: true }, (err) => {
-    if (err) {
-        console.log(err);
-    } else {
-        console.log('Connected to DB');
-    }
+  if (err) {
+    console.log(err);
+  } else {
+    console.log("Connected to DB");
+  }
 });
 
-app.listen(process.env.PORT, () => {
-    console.log(`Server is running on port ${process.env.PORT}`);
+app.listen(port, () => {
+  console.log(`Server is running on port ${port}`);
 });

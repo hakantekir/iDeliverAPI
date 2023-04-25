@@ -20,5 +20,5 @@ module.exports = {
     passwordTooShortError,
     invalidTokenError,
     expiredTokenError,
-    serverError,
+    serverError
 };

@@ -1,0 +1,249 @@
+openapi: 3.0.3
+info:
+  title: iDeliver
+  description: |-
+    iDeliver is a mobile app that allows users to order groceries for delivery straight to their door.
+  contact:
+    email: hakantekir2002@outlook.com
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+  version: 1.0.0
+servers:
+  - url: http://localhost:8000
+    description: Local server
+tags:
+  - name: Authentication
+    description: Authentication and authorization
+  - name: Category
+    description: Category endpoints
+paths:
+  /api/v1/auth/register:
+    post:
+      tags:
+        - Authentication
+      summary: Register a new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: Name of the user
+                  example: John Doe
+                email:
+                  type: string
+                  description: Email of the user
+                  example: john.doe@example.com
+                password:
+                  type: string
+                  description: Password of the user
+                  example: Password123
+              required:
+                - name
+                - email
+                - password
+      responses:
+        '201':
+          description: User created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                    description: JWT token
+                    example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+        '400':
+          description: Missing Name, Email or Password
+        '500':
+          description: Internal Server Error
+  /api/v1/auth/login:
+    post:
+      tags:
+        - Authentication
+      summary: Login as a user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  description: Email of the user
+                  example: john.doe@example.com
+                password:
+                  type: string
+                  description: Password of the user
+                  example: Password123
+              required:
+                - email
+                - password
+      responses:
+        '200':
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                    description: JWT token
+                    example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+        '400':
+          description: Missing Email or Password
+        '401':
+          description: Invalid Email or Password
+        '500':
+          description: Internal Server Error
+  /api/v1/auth/verify:
+    post:
+      tags:
+        - Authentication
+      summary: Verify a token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                token:
+                  type: string
+                  description: JWT token
+                  example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+              required:
+                - token
+      responses:
+        '200':
+          description: Token verified
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  name:
+                    type: string
+                  email:
+                    type: string
+        '400':
+          description: Missing Token
+        '401':
+          description: Invalid Token
+        '500':
+            description: Internal Server Error
+  /api/v1/categories:
+     get:
+       tags:
+         - Category
+       summary: Get all categories
+       responses:
+         '200':
+           description: List of categories
+
+  /api/v1/categories/{id}:
+    get:
+      tags:
+        - Category
+      summary: Get specific category
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: ID of the category
+      responses:
+        '200':
+          description: Category details
+        '404':
+          description: Category not found
+
+    post:
+      tags:
+        - Category
+      summary: Create category
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: Name of the category
+                  example: Fruits
+                image:
+                  type: string
+                  description: Image of the category
+                  example: https://example.com/image.png
+              required:
+                - name
+                - image
+      responses:
+        '201':
+          description: Category created
+        '400':
+          description: Missing category name
+        '500':
+          description: Internal Server Error
+
+    put:
+      tags:
+        - Category
+      summary: Update category
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+             type: integer
+          description: ID of the category
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: Name of the category
+                  example: Fruits
+                image:
+                  type: string
+                  description: Image of the category
+                  example: https://example.com/image.png
+              required:
+                - name
+                - image
+      responses:
+        '204':
+          description: Category updated
+        '404':
+          description: Category not found
+
+    delete:
+      tags:
+        - Category
+      summary: Delete category
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: ID of the category
+      responses:
+        '204':
+          description: Category deleted
+        '404':
+          description: Category not found
