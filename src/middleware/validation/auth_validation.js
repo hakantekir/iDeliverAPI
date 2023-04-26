@@ -31,7 +31,7 @@ class AuthValidation {
             "string.max": `Phone should have a maximum length of {#limit}`,
             "any.required": `Phone is a required field`,
           }),
-          password: joi.string().trim().required().min(6).messages({
+          password: joi.string().trim().required().min(8).messages({
             "string.empty": `Password cannot be an empty field`,
             "string.min": `Password should have a minimum length of {#limit}`,
             "any.required": `Password is a required field`,
