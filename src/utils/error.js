@@ -1,8 +1,8 @@
 const createError = (statusCode, reason, message) => {
-    const error = new Error(message);
-    error.statusCode = statusCode;
-    error.reason = reason;
-    return error;
+  const error = new Error(message);
+  error.statusCode = statusCode;
+  error.reason = reason;
+  return error;
 };
 
 // Server errors
@@ -23,13 +23,13 @@ const expiredTokenError = createError(401, "Expired token", "The token you provi
 const categoryNotFoundError = createError(404, "Category not found", "The category you requested does not exist");
 
 module.exports = {
-    serverError,
-    invalidIdError,
-    missingCredentialsError,
-    invalidCredentialsError,
-    emailExistsError,
-    passwordTooShortError,
-    invalidTokenError,
-    expiredTokenError,
-    categoryNotFoundError
+  serverError,
+  invalidIdError,
+  missingCredentialsError,
+  invalidCredentialsError,
+  emailExistsError,
+  passwordTooShortError,
+  invalidTokenError,
+  expiredTokenError,
+  categoryNotFoundError,
 };
