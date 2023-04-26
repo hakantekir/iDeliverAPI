@@ -20,7 +20,7 @@ const login = async (req, res, next) => {
 
     return new Response({ token: token }, "Login succesfully.").success(res);
   } else {
-    throw new APIError("User not found");
+    throw new APIError("User not found", 404);
   }
 };
 
