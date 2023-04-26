@@ -17,7 +17,8 @@ const login = async (req, res, next) => {
 
     const token = jwt.generateToken({ id: user._id, email: user.email }); //payload.
     //res.status(200).json({ token: token });
-    Response.success(res, { token: token });
+
+    return new Response({ token: token }, "Login succesfully.").success(res);
   } else {
     throw new APIError("User not found");
   }
@@ -35,7 +36,7 @@ const register = async (req, res, next) => {
   req.body.password = hashPassword;
 
   console.log(req.body.password);
-  const userSave = new Users(req.body);
+  const userSave = new User(req.body);
 
   await userSave
     .save()
