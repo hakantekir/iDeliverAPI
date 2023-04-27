@@ -1,6 +1,6 @@
 require("dotenv").config();
 const jwt = require("jsonwebtoken");
-const User = require("../../models/userModel");
+const User = require("../models/user");
 const APIError = require("../utils/errors");
 const Response = require("../utils/response");
 
@@ -83,25 +83,26 @@ const createTemporaryToken = async (userId, email) => {
   return token;
 };
 
-const decodedTemporaryToken = async (tempToken) => {
+const decodedTemporaryToken = (tempToken) => {
   //  console.log("tempToken :", tempToken);
-
   //  const token = tempToken.split(" ")[1]; //boşluklara ayır ve 1. elemanı al
 
-  // console.log("token :", token);
+  return new Promise((resolve, reject) => {
+    jwt.verify(tempToken, process.env.JWT_TEMPORARY_KEY, async (err, decoded) => {
+      if (err) {
+        console.log("err :", err.message);
+        // throw new APIError("Token is not valid", 401); //401 unauthorized
+        reject(new APIError("Token is not valid", 401));
+      }
+      const userInfo = User.findById(decoded.sub).select("_id name surname email phone");
 
-  await jwt.verify(tempToken, process.env.JWT_TEMPORARY_KEY, async (err, decoded) => {
-    if (err) {
-      console.log("err :", err.message);
-      //return new Response(null, err.message).error401(res);
-      throw new APIError("Token is not valid", 401); //401 unauthorized
-    }
-    //decoded_sub = user._id
-    const userInfo = User.findById(decoded.sub).select("_id name surname email phone");
-    if (!userInfo) {
-      throw new APIError("User not found and Invalid Token.", 404);
-    }
-    return userInfo;
+      if (!userInfo) {
+        reject(new APIError("User not found and Invalid Token.", 404));
+        // throw new APIError("User not found and Invalid Token.", 404);
+      }
+
+      resolve(userInfo);
+    });
   });
 };
 
